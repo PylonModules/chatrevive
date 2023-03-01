@@ -15,6 +15,15 @@ discord.interactions.commands.register(
       );
       return;
     }
+    
+    if (await revive.get<boolean>('revive')) {
+      return await interaction.respondEphemeral(
+        'The chat was already revived within the last hour. Please wait before using this command.'
+      );
+    }
+    await revive.put('revive', true, {
+      ttl: Math.ceil(Date.now() / 1000 / 60 / 60) * 60 * 60 * 1000 - Date.now(),
+    });
 
     await discord.getGuild(interaction.guildId).then(async (guild) => {
       await guild
@@ -39,13 +48,6 @@ discord.interactions.commands.register(
         });
     });
 
-    /*if (await revive.get<boolean>('revive')) {
-      return await interaction.respondEphemeral(
-        'The chat was already revived within the last hour. Please wait before using this command.'
-      );
-    }
-    await revive.put('revive', true, {
-      ttl: Math.ceil(Date.now() / 1000 / 60 / 60) * 60 * 60 * 1000 - Date.now(),
-    });*/
+    
   }
 );
